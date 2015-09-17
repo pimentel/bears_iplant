@@ -73,8 +73,167 @@ A basic quantification example for running sleuth afterwards looks like this:
 ```{sh}
 kallisto quant -i {KAL_IDX} -b 30 -t 2 -o {output[0]} {input[0]} {input[1]}
 ```
- after quantification, you will get a number of files in the output directory.
+
+### executing snakemake
+
+Since we have a snake file we can simply run the snake make command:
+
+```{sh}
+snakemake -p -j 2
+```
+
+- `-p` prints out the actual command that will execute
+- `-j 2` specifies that there are two available processors
+
+### output
+
+After quantification, you will get a number of files in the output directory.
 
 - `run_info.json` -  some high-level information about the run including the command and versions of kallisto used to generate the output
-- `abundance.tsv` - a plain text file with transcript level abundance estimates
-- `abundance.h5` - a HDF5 file containing all of the quantification information including bootstraps and other auxiliary information from the run. This file is imported into sleuth.
+- `abundance.tsv` - a plain text file with transcript level abundance estimates.This file can be read into our or any other statistical language easily (e.g. `read.tabe('abundance.tsv')`)
+- `abundance.h5` - a HDF5 file containing all of the quantification information including bootstraps and other auxiliary information from the run. This file is imported into sleuth
+
+# sleuth
+
+In the wild, a sleuth is a pack of bears. In the context of RNA-Seq, a sleuth is
+a pack of kallisto. The job of sleuth is to do aggregate analysis of many
+related samples at once. Currently, the main role of sleuth is to do differential
+transcription expression analysis. Sleuth differs from most other differential
+expression tools by modeling the technical error due to the transcript abundance
+estimation along with the biological variability between samples. Most methods
+only model the biological variability.
+
+## preliminaries
+
+start up RStudio and  load up sleuth:
+
+```{r}
+library('sleuth')
+```
+
+Though not required, I also suggest loading a package called `cowplot` which makes the `ggplot`
+default much more aesthetically pleasing:
+
+```{r}
+library('cowplot')
+```
+
+## preparing your data
+
+The main requirements of sleuth are:
+
+- sample to covariates mapping
+- output from kallisto
+
+
+### sample to covariate mapping
+
+This is simply a table that describes the experiment. possibly the most
+challenging part of sleuth is organizing your data into a way that it can be
+read and easily. The only real requirement is that there is at least one column
+labeled 'sample'. The remaining columns are important as they describe your
+experiment but the column names can realistically be pretty much anything.
+
+Our data is pretty simple in that there is only one covariate here: the
+experimental condition.
+
+This is what the file looks like:
+
+```{sh}
+cat metadata/hiseq_info.tsv
+TODO: put output here
+```
+
+Let's load this file in R:
+
+```{r}
+s2c <- read.table('metadata/hiseq_info.tsv', header = TRUE,
+  stringsAsFactors = FALSE)
+```
+
+### locating kallisto output
+
+Next, we have to tell `sleuth` where all the kallisto output is. If you've
+organized your data like we did in the snake file, this is quite easy. Sleuth is
+simply expecting a character array pointing to all the directories.
+
+Next get the list of sample IDs with
+
+```{r}
+sample_id <- dir(file.path(base_dir,"results"))
+```
+
+The result can be displayed by typing
+```{r}
+sample_id
+## [1] "SRR493366" "SRR493367" "SRR493368" "SRR493369" "SRR493370" "SRR493371"
+```
+
+In the box above, lines beginning with ## show the output of the command (in
+what follows we include the output that should appear with each command).
+
+A list of paths to the kallisto results indexed by the sample IDs is collated with
+
+```{r}
+kal_dirs <- sapply(sample_id, function(id) file.path(base_dir, "results", id, "kallisto"))
+kal_dirs
+```
+TODO: put kal_dirs output
+
+### fitting the model
+
+Now the “sleuth object” can be constructed. This requires three commands that
+(1) load the kallisto processed data into the object (2) estimate parameters for
+the sleuth response error measurement model and (3) perform differential analyis
+(testing). On a laptop the three steps should take about 2 minutes altogether.
+
+First type
+
+```{r}
+so <- sleuth_prep(kal_dirs, s2c, ~ condition)
+## reading in kallisto results
+## ......
+## normalizing est_counts
+## 42193 targets passed the filter
+## normalizing tpm
+## normalizing bootstrap samples
+```
+
+then
+
+```{r}
+so <- sleuth_fit(so)
+## summarizing bootstraps
+## fitting measurement error models
+## shrinkage estimation
+## computing variance of betas
+```
+
+and finally
+
+```{r}
+so <- sleuth_test(so, which_beta = 'conditionscramble')
+```
+
+In general, one can see the possible tests that could be performed using the
+`which_beta` parameter in sleuth_test and examining the coefficients:
+
+```{r}
+models(so)
+## [  full  ]
+## formula:  ~condition
+## coefficients:
+##  (Intercept)
+##      conditionscramble
+## tests:
+##  conditionscramble
+```
+
+### interactive analysis
+
+Sleuth provides many different ways visualize the data. Most visualizations are
+prefixed by `plot_`. While this is true, we think the best way to analyze your data is using sleuth live. Sleuth live gives you an interactive visualization along with all the differential expression analysis together. You can execute sleuth live with:
+
+```{r}
+sleuth_live(so)
+```

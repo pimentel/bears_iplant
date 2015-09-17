@@ -12,6 +12,19 @@ over the several different fastq files.
 I will not do more complicated analyses like get the sample ID numbers and pull
 down the particular data sets.
 
+## data organization
+
+In principle you can organize your data however you please. However I strongly
+suggest you organize it in the way of it we expect in the `Snakefile`. Please
+download your data in the following organization:
+
+```
+to do: run tree command once directory is organized
+```
+
+All that the following scripts expect is that you are working in this directory and the raw data conforms to this format (\*.sra files).
+
+
 # kallisto overview
 
 The kallisto pipeline is quite simple. There are basically two steps:
@@ -118,6 +131,8 @@ default much more aesthetically pleasing:
 library('cowplot')
 ```
 
+From here on, all the commands will be in our unless otherwise specified.
+
 ## preparing your data
 
 The main requirements of sleuth are:
@@ -137,7 +152,7 @@ experiment but the column names can realistically be pretty much anything.
 Our data is pretty simple in that there is only one covariate here: the
 experimental condition.
 
-This is what the file looks like:
+This is what the file looks like (from the terminal):
 
 ```{sh}
 cat metadata/hiseq_info.tsv
@@ -232,7 +247,10 @@ models(so)
 ### interactive analysis
 
 Sleuth provides many different ways visualize the data. Most visualizations are
-prefixed by `plot_`. While this is true, we think the best way to analyze your data is using sleuth live. Sleuth live gives you an interactive visualization along with all the differential expression analysis together. You can execute sleuth live with:
+prefixed by `plot_`. While this is true, we think the best way to analyze your
+data is using sleuth live. Sleuth live gives you an interactive visualization
+along with all the differential expression analysis together. You can execute
+sleuth live with:
 
 ```{r}
 sleuth_live(so)

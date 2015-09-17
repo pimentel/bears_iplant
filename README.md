@@ -51,5 +51,30 @@ Let's build an index from the provided ensemble human transcriptome:
 kallisto index -i
 ```
 
+## quantification
 
-## Quantification
+Once you index and annotation, you can quantify any number of samples against
+it. The quantification step includes both pseudoalignment as well as running
+the EM algorithm to do estimation of the transcript level abundances.
+
+The parameters are pretty minimal. You must supply an index, an output location,
+and a set of reads. In the case of single and data, you must specify that they
+are single and as well as a fragment length distribution. In the case of paired
+and data we can simply infer the fragment length distribution.
+
+There is also one other important parameter: the number of bootstrap iterations.
+By default, kallisto runs zero bootstrap iterations. If you do not plan to run
+sleuth, this is okay. But if you plan to run sleuth for differential expression
+you must provide a nonzero number of bootstraps. In general, this number is best
+to be greater than 30.
+
+A basic quantification example for running sleuth afterwards looks like this:
+
+```{sh}
+kallisto quant -i {KAL_IDX} -b 30 -t 2 -o {output[0]} {input[0]} {input[1]}
+```
+ after quantification, you will get a number of files in the output directory.
+
+- `run_info.json` -  some high-level information about the run including the command and versions of kallisto used to generate the output
+- `abundance.tsv` - a plain text file with transcript level abundance estimates
+- `abundance.h5` - a HDF5 file containing all of the quantification information including bootstraps and other auxiliary information from the run. This file is imported into sleuth.

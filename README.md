@@ -262,7 +262,7 @@ so <- sleuth_test(so, which_beta = 'conditionscramble')
 ```
 
 In general, one can see the possible tests that could be performed using the
-`which_beta` parameter in sleuth_test and examining the coefficients:
+`which_beta` parameter in `sleuth_test` and examining the coefficients:
 
 ```{r}
 models(so)
@@ -277,7 +277,7 @@ models(so)
 
 ### interactive analysis
 
-Sleuth provides many different ways visualize the data. Most visualizations are
+Sleuth provides many different ways visualize your data. Most visualizations are
 prefixed by `plot_`. While this is true, we think the best way to analyze your
 data is using sleuth live. Sleuth live gives you an interactive visualization
 along with all the differential expression analysis together. You can execute
@@ -286,3 +286,5 @@ sleuth live with:
 ```{r}
 sleuth_live(so)
 ```
+
+Let's chat about what sort of things to look out for.

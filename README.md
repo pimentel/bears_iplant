@@ -6,7 +6,9 @@ There are many different ways to run these commands in a pipeline. I personally 
 [`snakemake`](https://bitbucket.org/johanneskoester/snakemake/wiki/Home).
 A more complete analysis of using this data using `snakemake` can be [found
 here](https://github.com/pachterlab/bears_analyses) (along with other
-examples). Provided is a very simplified `Snakefile` that will help us iterate
+examples).
+
+Provided is a very simplified `Snakefile` that will help us iterate
 over the several different `fastq` files.
 
 I will not do more complicated analyses like get the sample ID numbers and pull
@@ -19,14 +21,24 @@ suggest you organize it in the way of it we expect in the `Snakefile`. Please
 download your data in the following organization:
 
 ```
-to do: run tree command once directory is organized
+mkdir -p ~/analysis
+cd ~/analysis
+wget -O bears_iplant.zip https://github.com/pimentel/bears_iplant/archive/master.zip
+unzip bears_iplant.zip
+mv bears_iplant-master bears_iplant
+cd bears_iplant
+```
+
+This will put the walkthrough at `~/analysis/bears_iplant` and place you in that
+directory.
+
+Next, you will need to download the data.
+
+```
+TODO: download link once it's done
 ```
 
 All that the following scripts expect is that you are working in this directory and the raw data conforms to this format (\*.fastq.gz files).
-
-## change to this directory
-
-After you've downloaded the data, change to the directory you cloned this repo at.
 
 # kallisto overview
 

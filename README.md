@@ -88,6 +88,11 @@ Next, let's build an index from the provided ensemble human transcriptome:
 kallisto index -i annotation/human_trans.kidx annotation/human_trans.fa.gz
 ```
 
+This creates an index at `annotation/human_trans.kidx` from the annotation
+`annotation/human_trans.fa.gz` with the default k-mer size (k = 31). Note that
+if you have very short reads (e.g. 35bp), you should change `k` to something
+smaller (e.g. `-k 21`).
+
 ## quantification
 
 Once you index an annotation, you can quantify any number of samples against it.
@@ -156,7 +161,16 @@ only model the biological variability.
 
 ## preliminaries
 
-start up RStudio and  load up sleuth:
+Start up RStudio and navigate to the directory we've been working in.
+
+```{r}
+setwd('~/analysis/bears_iplant')
+```
+
+Open a new file, and let's start adding code to it. You can execute a line in
+Rstudio using `ctrl + enter`.
+
+Next, load sleuth:
 
 ```{r}
 library('sleuth')
@@ -166,10 +180,12 @@ Though not required, I also suggest loading a package called `cowplot` which mak
 default much more aesthetically pleasing:
 
 ```{r}
+# install.pakages('cowplot')
+# if it isn't installed
 library('cowplot')
 ```
 
-From here on, all the commands will be in our unless otherwise specified.
+From here on, all the commands will be in R unless otherwise specified.
 
 ## preparing your data
 

@@ -33,8 +33,8 @@ rule get_annotation:
         ANNO_FA
     shell:
         'wget -O {output} '
-        'http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
-'
+        'http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz'
+
 rule kallisto_index:
     input:
         ANNO_FA
@@ -42,4 +42,4 @@ rule kallisto_index:
         KAL_IDX
     shell:
         'kallisto index '
-        '-i {input} {output}'
+        '-i {output} {input}'

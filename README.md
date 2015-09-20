@@ -35,10 +35,12 @@ directory.
 Next, you will need to download the data.
 
 ```
-TODO: download link once it's done
+wget http://de.iplantcollaborative.org/dl/d/777051B5-1339-457B-A776-5C57B99D7EC0/cuffdiff2_data_res.tar.gz
+tar -xvf cuffdiff2_data_res.tar.gz
 ```
 
-All that the following scripts expect is that you are working in this directory and the raw data conforms to this format (\*.fastq.gz files).
+All that the following scripts expect is that you are working in this directory
+and the raw data conforms to this format (\*.fastq.gz files).
 
 # kallisto overview
 
@@ -77,7 +79,7 @@ Let's start off by downloading the annotation (note: this URL might change in th
 
 ```{sh}
 mkdir annotation
-curl -o annotation/human_trans.fa.gz http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
+wget -O annotation/human_trans.fa.gz http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
 ```
 
 Next, let's build an index from the provided ensemble human transcriptome:

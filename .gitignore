@@ -1,0 +1,5 @@
+*.DS_Store
+
+annotation/*
+
+cuffdiff2_data*tar.gz

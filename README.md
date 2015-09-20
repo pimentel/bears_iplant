@@ -127,16 +127,30 @@ kallisto quant -i annotation/some_index.kidx -b 30 -t 2 -o results/sample_id \
 
 ### executing snakemake
 
-TODO: explain why snakemake is important
+Snakemake is a tool for reproducible pipelines geared towards bioinformatics.
+You specify a set of rules that each contain input, output, and some commands to
+generate output from the input. Snakemake then figures out how to generate the
+output as well as all the intermediate dependencies. You can simply specify the
+final output and it will figure everything out in between.
 
-Open up `Snakefile` and have a let's talk about what it's doing.
+Open up `Snakefile` and have a let's talk about what it's doing. upon inspection
+you will notice that there are some rules to download the annotation as well as
+build the index. we could have actually just ran the Snakefile and it would have
+done most of the previous commands.
 
-Since we have a `Snakefile`, we can simply run the `snakemake` command:
+To see what it will do, we can run a 'dry run':
+
+```{sh}
+snakemake -p -j 2 --dryrun
+```
+
+This will give you a list of all the commands that it will run.
+
+Let's run it for real this time:
 
 ```{sh}
 snakemake -p -j 2
 ```
-
 
 - `-p` prints out the actual command that will execute
 - `-j 2` specifies that there are two available processors
@@ -161,10 +175,11 @@ only model the biological variability.
 
 ## preliminaries
 
-Start up RStudio and navigate to the directory we've been working in.
+Start up RStudio and navigate to `R` subdirectory in the directory we've been
+working in.
 
 ```{r}
-setwd('~/analysis/bears_iplant')
+setwd('~/analysis/bears_iplant/R')
 ```
 
 Open a new file, and let's start adding code to it. You can execute a line in
@@ -185,7 +200,16 @@ default much more aesthetically pleasing:
 library('cowplot')
 ```
 
+Let's also set the base working directory:
+
+```{r}
+base_dir <- '..'
+```
+
 From here on, all the commands will be in R unless otherwise specified.
+
+Alternatively, this code exists (with some slight additions and modifications)
+in `R/analysis.R`.
 
 ## preparing your data
 
@@ -222,8 +246,8 @@ SRR493371       HOXA1KD
 Let's load this file in R:
 
 ```{r}
-s2c <- read.table('metadata/hiseq_info.tsv', header = TRUE,
-  stringsAsFactors = FALSE)
+s2c <- read.table(file.path(base_dir, 'metadata', 'sample_info.tsv'),
+  header = TRUE, stringsAsFactors = FALSE)
 ```
 
 ### locating kallisto output
@@ -235,7 +259,6 @@ simply expecting a character array pointing to all the directories.
 Next get the list of sample IDs with
 
 ```{r}
-base_dir <- '.'
 sample_id <- dir(file.path(base_dir,"results"))
 ```
 

@@ -27,3 +27,19 @@ rule kallisto_paired:
         '-t {threads} '
         '-o {output[0]} '
         '{input[0]} {input[1]}'
+
+rule get_annotation:
+    output:
+        ANNO_FA
+    shell:
+        'wget -O {output} '
+        'http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
+'
+rule kallisto_index:
+    input:
+        ANNO_FA
+    output:
+        KAL_IDX
+    shell:
+        'kallisto index '
+        '-i {input} {output}'

@@ -1,24 +1,40 @@
 library('sleuth')
 
-# install.pakages('cowplot')
+# install.packages('cowplot')
 # if it isn't installed
 library('cowplot')
 
 base_dir <- '..'
 
+# get the sample to covariate mapping
 s2c <- read.table(file.path(base_dir, 'metadata', 'sample_info.tsv'),
   header = TRUE, stringsAsFactors = FALSE)
 
-sample_id <- dir(file.path(base_dir,"results"))
+# get the sample id names
+sample_id <- dir(file.path(base_dir, "results", "paired"))
 sample_id
 
-kal_dirs <- sapply(sample_id, function(id) file.path(base_dir, "results", id, "kallisto"))
+# create a vector that points to all the kallisto results
+kal_dirs <- sapply(sample_id, function(id) file.path(base_dir, "results",
+  "paired", id, "kallisto"))
 kal_dirs
 
-so <- sleuth_prep(kal_dirs, s2c, ~ condition)
+# get the gene names using biomaRt
+mart <- biomaRt::useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id",
+    "external_gene_name"), mart = mart)
+t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id,
+  ens_gene = ensembl_gene_id, ext_gene = external_gene_name)
+
+# create the sleuth object
+so <- sleuth_prep(kal_dirs, s2c, ~ condition, target_mapping = t2g)
+# fit the full model
 so <- sleuth_fit(so)
+# perform the test
 so <- sleuth_test(so, which_beta = 'conditionscramble')
 
+# see which models and test have been performed
 models(so)
 
+# open up the shiny object for interactive analysis
 sleuth_live(so)

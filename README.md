@@ -21,7 +21,7 @@ starting the pipeline (as seen [here](https://github.com/pachterlab/bears_analys
 
 ## data organization
 
-In principle you can organize your data however you please. However, I strongly
+In principle, you can organize your data however you please. However, I strongly
 recommend following a format such as the one we present here.
 
 First, download the walk-through along some of the auxiliary materials:
@@ -38,7 +38,7 @@ cd bears_iplant
 This will put the walkthrough at `~/analysis/bears_iplant` and place you in that
 directory.
 
-Next, you will need to download the data.
+Next, you will need to download the data:
 
 ```
 wget http://de.iplantcollaborative.org/dl/d/777051B5-1339-457B-A776-5C57B99D7EC0/cuffdiff2_data_res.tar.gz
@@ -59,15 +59,15 @@ there are no extra intermediate files.
 
 ## index
 
-Before you can use kallisto for any type of quantification, you must create an
+Before you can quantify with kallisto, you must create an
 index from an annotation file. For RNA-Seq, an annotation file is the set of
-cDNA transcripts in a FASTA format (the "transcriptome"). We provide some common
+cDNA transcripts in FASTA format (the "transcriptome"). We provide some common
 transcriptomes [here](http://bio.math.berkeley.edu/kallisto/transcriptomes/).
-Ensembl has a collection of many of them, including one that we will use today.
+Ensembl has a collection of many annotations, including the one that we will use today.
 If you are not working with a model organism, one option is to do a de novo
-assembly.
+assembly (covered later today).
 
-An `index` operation creates the target de Bruijn graph structure along with a
+An `index` operation creates the target [de Bruijn](http://thegenomefactory.blogspot.com/2013/08/how-to-pronounce-de-bruijn.html?m=1) graph structure along with a
 few other data structures that we use in kallisto for fast pseudoalignment. It
 simply takes a FASTA file and outputs an index in a binary format that we
 designed for kallisto. There is no default extension for the index, though I
@@ -116,6 +116,8 @@ kallisto quant -i annotation/some_index.kidx -b 30 -t 2 -o results/sample_id \
   data/sample_id/sample_id_1.fastq.gz data/sample_id/sample_id_2.fastq.gz
 ```
 
+where:
+
 - `-i annotation/some_index.kidx` indicates to use this `kallisto index`
 - `-b 30` indicates to generate 30 bootstrap samples
 - `-t 2` indicates to use 2 threads
@@ -126,10 +128,10 @@ kallisto quant -i annotation/some_index.kidx -b 30 -t 2 -o results/sample_id \
 ### executing snakemake
 
 Snakemake is a tool for reproducible pipelines geared towards bioinformatics.
-You specify a set of rules that each contain input, output, and some commands to
+You specify a set of rules in a `Snakefile` that each contain input, output, and some commands to
 generate the output from the input. Snakemake then infers how to generate the
 output as well as all the intermediate dependencies. You can simply specify the
-final output and it will figure everything out in between.
+final output and it will figure out everything in between.
 
 Open up `Snakefile` and let's talk about what it's doing. Upon inspection
 you will notice that there are some rules to download the annotation as well as
@@ -170,13 +172,18 @@ After quantification, you will get a number of files in the output directory.
 In the wild, a sleuth is a pack of bears. In the context of RNA-Seq, a sleuth is
 a pack of kallisto. The job of sleuth is to perform aggregate analysis of many
 related samples at once. Currently, the main role of sleuth is to do
-differential expression analysis. Sleuth differs from most other differential
+differential expression analysis at the transcript level. Sleuth differs from most other differential
 expression tools by modeling the technical variance due to the transcript abundance
 estimation along with the biological variability between samples. Most methods
 only model the biological variability.
 
-## preliminaries
+To explain how to use __sleuth__ we provide an example based on the data in the "Cuffdiff2 paper":
 
+* [Differential analysis of gene regulation at transcript resolution with RNA-seq](http://www.nature.com/nbt/journal/v31/n1/full/nbt.2450.html)	by Cole Trapnell, David G Henderickson, Martin Savageau, Loyal Goff, John L Rinn and Lior Pachter, Nature Biotechnology __31__, 46--53 (2013).
+
+The human fibroblast RNA-Seq data for the paper is available on GEO at accession [GSE37704](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE37704). The samples to be analyzed are the six samples LFB_scramble_hiseq_repA, LFB_scramble_hiseq_repB, LFB_scramble_hiseq_repC, LFB_HOXA1KD_hiseq_repA, LFB_HOXA1KD_hiseq_repA, and LFB_HOXA1KD_hiseq_repC. These are three biological replicates in each of two conditions (scramble and HoxA1 knockdown) that will be compared with __sleuth__.
+
+## preliminaries
 
 Start up RStudio and navigate to `R` subdirectory in the directory we've been
 working in.
@@ -185,7 +192,7 @@ working in.
 setwd('~/analysis/bears_iplant/R')
 ```
 
-First, let's install `sleuth` and `biomart`, a tool that we will use later for
+First, let's install `sleuth` and `biomaRt`, a tool that we will use later for
 getting the gene names:
 
 ```{r}
@@ -229,14 +236,13 @@ The main requirements of sleuth are:
 - sample to covariates mapping
 - output from kallisto
 
-
 ### sample to covariate mapping
 
-This is simply a table that describes the experiment. possibly the most
+The sample to covariate mapping is simply a table that describes the experiment. possibly the most
 challenging part of sleuth is organizing your data into a way that it can be
 read and easily. The only real requirement is that there is at least one column
 labeled 'sample'. The remaining columns are important as they describe your
-experiment but the column names can realistically be pretty much anything.
+experiment, but the column names can be pretty much any valid string.
 
 Our data is pretty simple in that there is only one covariate here: the
 experimental condition.

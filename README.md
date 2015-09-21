@@ -185,7 +185,8 @@ working in.
 setwd('~/analysis/bears_iplant/R')
 ```
 
-First, let's install sleuth:
+First, let's install `sleuth` and `biomart`, a tool that we will use later for
+getting the gene names:
 
 ```{r}
 source('http://bioconductor.org/biocLite.R')
@@ -194,8 +195,9 @@ biocLite("pachterlab/sleuth")
 biocLite("biomaRt")
 ```
 
-Open a new file, and let's start adding code to it. You can execute a line in
-Rstudio using `ctrl + enter`.
+Open a new file if you would like to type the commands and add them as we go
+along, or you can simply open `analysis.R` and follow along. You can execute a
+line in Rstudio using `ctrl + enter`.
 
 Next, load sleuth:
 
@@ -219,9 +221,6 @@ base_dir <- '..'
 ```
 
 From here on, all the commands will be in R unless otherwise specified.
-
-Alternatively, this code exists (with some slight additions and modifications)
-in `R/analysis.R`.
 
 ## preparing your data
 

@@ -332,7 +332,7 @@ the sleuth response error measurement model and (3) perform differential analyis
 First type
 
 ```r
-so <- sleuth_prep(kal_dirs, s2c, ~ condition, target_mapping = t2g)
+so <- sleuth_prep(s2c, ~ condition, target_mapping = t2g)
 ## reading in kallisto results
 ## ......
 ## normalizing est_counts

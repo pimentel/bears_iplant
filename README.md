@@ -128,6 +128,7 @@ where:
 ### running kallisto
 
 ```
+mkdir results/paired/SRR493366
 kallisto quant -i annotation/human_trans.kidx -b 30 --bias -t 2 -o results/paired/SRR493366/kallisto data/SRR493366/SRR493366_1.fastq.gz data/SRR493366/SRR493366_2.fastq.gz
 ```
 

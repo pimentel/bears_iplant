@@ -77,7 +77,7 @@ Let's start off by downloading the annotation (note: this URL might change in th
 
 ```bash
 mkdir annotation
-wget -O annotation/human_trans.fa.gz http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
+curl -o annotation/human_trans.fa.gz http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
 ```
 
 Next, let's build an index from the provided Ensembl human transcriptome:

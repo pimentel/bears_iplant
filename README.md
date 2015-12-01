@@ -75,14 +75,14 @@ like to use `.kidx`.
 
 Let's start off by downloading the annotation (note: this URL might change in the future):
 
-```{sh}
+```bash
 mkdir annotation
 wget -O annotation/human_trans.fa.gz http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
 ```
 
 Next, let's build an index from the provided Ensembl human transcriptome:
 
-```{sh}
+```bash
 kallisto index -i annotation/human_trans.kidx annotation/human_trans.fa.gz
 ```
 
@@ -111,7 +111,7 @@ number should be at least 30.
 A basic quantification example for running sleuth afterwards looks like this
 (though, the command below won't work because this data doesn't actually exist):
 
-```{sh}
+```bash
 kallisto quant -i annotation/some_index.kidx -b 30 -t 2 -o results/sample_id \
   data/sample_id/sample_id_1.fastq.gz data/sample_id/sample_id_2.fastq.gz
 ```
@@ -140,7 +140,7 @@ done most of the previous commands.
 
 To see what it will do, we can run a 'dry run':
 
-```{sh}
+```bash
 /tools/snakemake/bin/snakemake -p -j 2 --dryrun
 ```
 
@@ -148,7 +148,7 @@ This will give you a list of all the commands that it will run.
 
 Let's run it for real this time:
 
-```{sh}
+```bash
 /tools/snakemake/bin/snakemake -p -j 2
 ```
 
@@ -188,14 +188,14 @@ The human fibroblast RNA-Seq data for the paper is available on GEO at accession
 Start up RStudio and navigate to `R` subdirectory in the directory we've been
 working in.
 
-```{r}
+```r
 setwd('~/analysis/bears_iplant/R')
 ```
 
 First, let's install `sleuth` and `biomaRt`, a tool that we will use later for
 getting the gene names:
 
-```{r}
+```r
 source('http://bioconductor.org/biocLite.R')
 biocLite("devtools")
 biocLite("pachterlab/sleuth")
@@ -208,14 +208,14 @@ line in Rstudio using `ctrl + enter`.
 
 Next, load sleuth:
 
-```{r}
+```r
 library('sleuth')
 ```
 
 Though not required, I also suggest loading a package called `cowplot` which makes the `ggplot`
 default much more aesthetically pleasing:
 
-```{r}
+```r
 # install.packages('cowplot')
 # if it isn't installed
 library('cowplot')
@@ -223,7 +223,7 @@ library('cowplot')
 
 Let's also set the base working directory:
 
-```{r}
+```r
 base_dir <- '..'
 ```
 
@@ -249,7 +249,7 @@ experimental condition.
 
 This is what the file looks like (from the terminal):
 
-```{sh}
+```bash
 cat metadata/sample_info.tsv
 sample  condition
 SRR493366       scramble
@@ -262,7 +262,7 @@ SRR493371       HOXA1KD
 
 Let's load this file in R:
 
-```{r}
+```r
 s2c <- read.table(file.path(base_dir, 'metadata', 'sample_info.tsv'),
   header = TRUE, stringsAsFactors = FALSE)
 ```
@@ -275,12 +275,12 @@ simply expecting a character array pointing to all the directories.
 
 Next get the list of sample IDs with
 
-```{r}
+```r
 sample_id <- dir(file.path(base_dir, "results", "paired"))
 ```
 
 The result can be displayed by typing
-```{r}
+```r
 sample_id
 ## [1] "SRR493366" "SRR493367" "SRR493368" "SRR493369" "SRR493370" "SRR493371"
 ```
@@ -290,9 +290,21 @@ what follows we include the output that should appear with each command).
 
 A list of paths to the kallisto results indexed by the sample IDs is collated with
 
-```{r}
+```r
 kal_dirs <- sapply(sample_id, function(id) file.path(base_dir, "results",
   "paired", id, "kallisto"))
+```
+
+Finally, we have to add these directories to the sample to covariates data.frameto:
+
+```r
+s2c <- mutate(s2c, path = kal_dirs)
+```
+
+Be sure to look at the data frame to ensure consistency between the sample ids as well as the path that was provided:
+
+```r
+s2c
 ```
 
 ### getting gene names
@@ -301,7 +313,7 @@ Since the gene names are not automatically in the annotation, we need to get
 them from elsewhere. `biomaRt` provide a good way of getting the mappings for
 Ensembl annotations.
 
-```{r}
+```r
 # get the gene names using biomaRt
 mart <- biomaRt::useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id",
@@ -319,7 +331,7 @@ the sleuth response error measurement model and (3) perform differential analyis
 
 First type
 
-```{r}
+```r
 so <- sleuth_prep(kal_dirs, s2c, ~ condition, target_mapping = t2g)
 ## reading in kallisto results
 ## ......
@@ -331,7 +343,7 @@ so <- sleuth_prep(kal_dirs, s2c, ~ condition, target_mapping = t2g)
 
 then
 
-```{r}
+```r
 so <- sleuth_fit(so)
 ## summarizing bootstraps
 ## fitting measurement error models
@@ -341,22 +353,20 @@ so <- sleuth_fit(so)
 
 and finally
 
-```{r}
-so <- sleuth_test(so, which_beta = 'conditionscramble')
+```r
+so <- sleuth_wt(so, which_beta = 'conditionscramble')
 ```
 
 In general, one can see the possible tests that could be performed using the
-`which_beta` parameter in `sleuth_test` and examining the coefficients:
+`which_beta` parameter in `sleuth_wt` and examining the coefficients:
 
-```{r}
+```r
 models(so)
 ## [  full  ]
 ## formula:  ~condition
 ## coefficients:
 ##  (Intercept)
 ##      conditionscramble
-## tests:
-##  conditionscramble
 ```
 
 ### interactive analysis
@@ -367,7 +377,7 @@ data is using sleuth live. Sleuth live gives you an interactive visualization
 along with all the differential expression analysis together. You can execute
 sleuth live with:
 
-```{r}
+```r
 sleuth_live(so)
 ```
 

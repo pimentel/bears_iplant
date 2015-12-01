@@ -125,6 +125,12 @@ where:
 - `-o results/sample_id` indicates to place output in directory `results/sample_id` (e.g. `results/sample_id/abundance.h5`)
 - the final two arguments are the 'left' and 'right' reads, respectively
 
+### running kallisto
+
+```
+kallisto quant -i annotation/human_trans.kidx -b 30 --bias -t 2 -o results/paired/SRR493366/kallisto data/SRR493366/SRR493366_1.fastq.gz data/SRR493366/SRR493366_2.fastq.gz
+```
+
 ### executing snakemake
 
 Snakemake is a tool for reproducible pipelines geared towards bioinformatics.

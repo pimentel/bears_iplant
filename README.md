@@ -127,9 +127,13 @@ where:
 
 ### running kallisto
 
+If you were to run this manually (without using Snakemake), the commands that you would need to perform are listed below:
+
 ```
 mkdir results/paired/SRR493366
-kallisto quant -i annotation/human_trans.kidx -b 30 --bias -t 2 -o results/paired/SRR493366/kallisto data/SRR493366/SRR493366_1.fastq.gz data/SRR493366/SRR493366_2.fastq.gz
+kallisto quant -i annotation/human_trans.kidx -b 30 --bias -t 2 \
+  -o results/paired/SRR493366/kallisto \
+  data/SRR493366/SRR493366_1.fastq.gz data/SRR493366/SRR493366_2.fastq.gz
 ```
 
 ### executing snakemake

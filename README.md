@@ -3,7 +3,7 @@
 This is a walk-through for [kallisto](http://pachterlab.github.io/kallisto) and
 [sleuth](http://pachterlab.github.io/sleuth). 
 
-# Preliminaries --- THE FOLLOWING CODES NEED TO BE DONE ON YOUR INFRASTRUCTURE ACCOUNT
+## Preliminaries --- THE NEXT FEW CODES NEED TO BE DONE ON YOUR INFRASTRUCTURE ACCOUNT
 
 ## data organization
 
@@ -115,7 +115,7 @@ where:
 
 ### running kallisto
 
-If you were to run this manually (without using Snakemake), the commands that you would need to perform are listed below:
+Run the following commands to start kallisto.  Note how fast it is compared to other counting programs.
 
 ```
 mkdir ~/bears_iplant/analysis/results/paired/SRR493366
@@ -151,13 +151,13 @@ The human fibroblast RNA-Seq data for the paper is available on GEO at accession
 ## Now we need to download our data onto our desktop to continue
 
 Make a directory on your desktop called "bears_iplant"
-Copy your 
+Copy your output using WinSCP or Cyberduck into this directory.
 
 Start up RStudio and navigate to `R` subdirectory in the directory we've been
 working in.
 
 ```r
-setwd('~/analysis/bears_iplant/R')
+setwd('~/Desktop/bears_iplant/R')
 ```
 
 First, let's install `sleuth` and `biomaRt`, a tool that we will use later for
@@ -215,7 +215,7 @@ experiment, but the column names can be pretty much any valid string.
 Our data is pretty simple in that there is only one covariate here: the
 experimental condition.
 
-This is what the file looks like (from the terminal):
+This is what the file looks like (from the terminal --- NOT INSIDE R):
 
 ```bash
 cat metadata/sample_info.tsv

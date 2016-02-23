@@ -1,29 +1,16 @@
 # kallisto and sleuth walkthrough
 
 This is a walk-through for [kallisto](http://pachterlab.github.io/kallisto) and
-[sleuth](http://pachterlab.github.io/sleuth). It assumes that you are running on the
-iPlant servers, but the commands can easily be adapted to run on any machine
-with Snakemake, kallisto, and sleuth installed.
+[sleuth](http://pachterlab.github.io/sleuth). 
 
-# Preliminaries
-
-There are many different ways to run these commands in a pipeline. I personally prefer to use
-[`snakemake`](https://bitbucket.org/johanneskoester/snakemake/wiki/Home).
-A more complete analysis of using this data using `snakemake` can be [found
-here](https://github.com/pachterlab/bears_analyses) (along with other
-examples).
-
-Provided is a very simplified `Snakefile` that will help us iterate
-over the several different `fastq` files.
-
-It is simple to adapt this example so that there is no user intervention beyond
-starting the pipeline (as seen [here](https://github.com/pachterlab/bears_analyses)).
+# Preliminaries --- THE FOLLOWING CODES NEED TO BE DONE ON YOUR INFRASTRUCTURE ACCOUNT
 
 ## data organization
 
 In principle, you can organize your data however you please. However, I strongly
 recommend following a format such as the one we present here.
 
+Login to your infrastructure account.
 First, download the walk-through along some of the auxiliary materials:
 
 ```
@@ -38,7 +25,7 @@ cd bears_iplant
 This will put the walkthrough at `~/analysis/bears_iplant` and place you in that
 directory.
 
-Next, you will need to download the data:
+Next, you will need to download the data, this takes about 10-20 minutes:
 
 ```
 wget http://de.iplantcollaborative.org/dl/d/777051B5-1339-457B-A776-5C57B99D7EC0/cuffdiff2_data_res.tar.gz
@@ -65,7 +52,7 @@ cDNA transcripts in FASTA format (the "transcriptome"). We provide some common
 transcriptomes [here](http://bio.math.berkeley.edu/kallisto/transcriptomes/).
 Ensembl has a collection of many annotations, including the one that we will use today.
 If you are not working with a model organism, one option is to do a de novo
-assembly (covered later today).
+assembly.
 
 An `index` operation creates the target [de Bruijn](http://thegenomefactory.blogspot.com/2013/08/how-to-pronounce-de-bruijn.html?m=1) graph structure along with a
 few other data structures that we use in kallisto for fast pseudoalignment. It
@@ -73,21 +60,21 @@ simply takes a FASTA file and outputs an index in a binary format that we
 designed for kallisto. There is no default extension for the index, though I
 like to use `.kidx`.
 
-Let's start off by downloading the annotation (note: this URL might change in the future):
+Let's start off by downloading the annotation.  This download takes several minutes:
 
 ```bash
-mkdir annotation
-curl -o annotation/human_trans.fa.gz http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
+mkdir ~/analysis/bears_iplant/annotation
+curl -o ~/analysis/bears_iplant/annotation/human_trans.fa.gz  http://bio.math.berkeley.edu/kallisto/transcriptomes/Homo_sapiens.GRCh38.rel79.cdna.all.fa.gz
 ```
 
 Next, let's build an index from the provided Ensembl human transcriptome:
 
 ```bash
-kallisto index -i annotation/human_trans.kidx annotation/human_trans.fa.gz
+kallisto index -i ~/analysis/bears_iplant/annotation/human_trans.kidx ~/analysis/bears_iplant/annotation/human_trans.fa.gz
 ```
 
-This creates an index at `annotation/human_trans.kidx` from the annotation
-`annotation/human_trans.fa.gz` with the default k-mer size (k = 31). Note, that
+This creates an index at `~/analysis/bears_iplant/annotation/human_trans.kidx` from the annotation
+`~/analysis/bears_iplant/annotation/human_trans.fa.gz` with the default k-mer size (k = 31). Note, that
 if you have very short reads (e.g. 35bp), you should change `k` to something
 smaller (e.g. `-k 21`).
 
@@ -112,17 +99,18 @@ A basic quantification example for running sleuth afterwards looks like this
 (though, the command below won't work because this data doesn't actually exist):
 
 ```bash
-kallisto quant -i annotation/some_index.kidx -b 30 -t 2 -o results/sample_id \
-  data/sample_id/sample_id_1.fastq.gz data/sample_id/sample_id_2.fastq.gz
+kallisto quant -i ~/analysis/bears_iplant/annotation/some_index.kidx -b 30 -t 2 -o ~/analysis/bears_iplant/results/sample_id \
+  ~/analysis/bears_iplant/data/sample_id/sample_id_1.fastq.gz ~/analysis/bears_iplant/data/sample_id/sample_id_2.fastq.gz
 ```
 
 where:
 
-- `-i annotation/some_index.kidx` indicates to use this `kallisto index`
+- `-i ~/bears_iplant/analysis/annotation/some_index.kidx` indicates to use this `kallisto index`
 - `-b 30` indicates to generate 30 bootstrap samples
 - `-t 2` indicates to use 2 threads
 - `sample_id` is some sample identifier that is unique to each sample
-- `-o results/sample_id` indicates to place output in directory `results/sample_id` (e.g. `results/sample_id/abundance.h5`)
+- `-o ~/bears_iplant/analysis/results/sample_id` indicates to place output in directory `~/analysis/results/sample_id` 
+-       (e.g. `~/bears_iplant/analysis/results/sample_id/abundance.h5`)
 - the final two arguments are the 'left' and 'right' reads, respectively
 
 ### running kallisto
@@ -130,45 +118,11 @@ where:
 If you were to run this manually (without using Snakemake), the commands that you would need to perform are listed below:
 
 ```
-mkdir results/paired/SRR493366
-kallisto quant -i annotation/human_trans.kidx -b 30 --bias -t 2 \
-  -o results/paired/SRR493366/kallisto \
-  data/SRR493366/SRR493366_1.fastq.gz data/SRR493366/SRR493366_2.fastq.gz
+mkdir ~/bears_iplant/analysis/results/paired/SRR493366
+kallisto quant -i ~/bears_iplant/analysis/annotation/human_trans.kidx -b 30 --bias -t 2 \
+  -o ~/bears_iplant/analysis/results/paired/SRR493366/kallisto \
+  ~/bears_iplant/analysis/data/SRR493366/SRR493366_1.fastq.gz ~/analysis/data/SRR493366/SRR493366_2.fastq.gz
 ```
-
-### executing snakemake
-
-Snakemake is a tool for reproducible pipelines geared towards bioinformatics.
-You specify a set of rules in a `Snakefile` that each contain input, output, and some commands to
-generate the output from the input. Snakemake then infers how to generate the
-output as well as all the intermediate dependencies. You can simply specify the
-final output and it will figure out everything in between.
-
-Open up `Snakefile` and let's talk about what it's doing. Upon inspection
-you will notice that there are some rules to download the annotation as well as
-build the index. We could have actually just ran the `Snakefile` and it would have
-done most of the previous commands.
-
-To see what it will do, we can run a 'dry run':
-
-```bash
-/tools/snakemake/bin/snakemake -p -j 2 --dryrun
-```
-
-This will give you a list of all the commands that it will run.
-
-Let's run it for real this time:
-
-```bash
-/tools/snakemake/bin/snakemake -p -j 2
-```
-
-- `-p` prints out the actual command that will execute
-- `-j 2` specifies that there are two available processors
-
-After it is complete, you can try to run `snakemake` again. You will notice that
-it says that there is nothing left to do. This is a great feature of Snakemake --
-it keeps track of what has been done and what needs to be done.
 
 ### output
 
@@ -194,7 +148,10 @@ To explain how to use __sleuth__ we provide an example based on the data in the 
 
 The human fibroblast RNA-Seq data for the paper is available on GEO at accession [GSE37704](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE37704). The samples to be analyzed are the six samples LFB_scramble_hiseq_repA, LFB_scramble_hiseq_repB, LFB_scramble_hiseq_repC, LFB_HOXA1KD_hiseq_repA, LFB_HOXA1KD_hiseq_repA, and LFB_HOXA1KD_hiseq_repC. These are three biological replicates in each of two conditions (scramble and HoxA1 knockdown) that will be compared with __sleuth__.
 
-## preliminaries
+## Now we need to download our data onto our desktop to continue
+
+Make a directory on your desktop called "bears_iplant"
+Copy your 
 
 Start up RStudio and navigate to `R` subdirectory in the directory we've been
 working in.

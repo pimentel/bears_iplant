@@ -3,7 +3,7 @@
 This is a walk-through for [kallisto](http://pachterlab.github.io/kallisto) and
 [sleuth](http://pachterlab.github.io/sleuth). 
 
-## Preliminaries --- THE NEXT FEW CODES NEED TO BE DONE ON YOUR INFRASTRUCTURE ACCOUNT
+### Preliminaries --- THE NEXT FEW CODES NEED TO BE DONE ON YOUR INFRASTRUCTURE ACCOUNT
 
 ## data organization
 

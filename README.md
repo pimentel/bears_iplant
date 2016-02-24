@@ -241,8 +241,7 @@ SRR493371       HOXA1KD
 Let's load this file in R:
 
 ```r
-s2c <- read.table("https://raw.githubusercontent.com/Arhodes-CGRB-OSU/bears_iplant/gh-pages/metadata/sample_info.tsv",
-  header = TRUE, stringsAsFactors = FALSE)
+s2c <- read.delim("https://raw.githubusercontent.com/Arhodes-CGRB-OSU/bears_iplant/gh-pages/metadata/sample_info.tsv",sep ="\t",header = T)
 ```
 
 ### locating kallisto output

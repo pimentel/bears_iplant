@@ -155,12 +155,19 @@ Inside that directory, make another directory named R
 
 Copy your output using WinSCP or Cyberduck into this directory.
 
-Start up RStudio and navigate to `R` subdirectory in the directory we've been
-working in.
+Start up RStudio and navigate to `R` subdirectory that you created on your desktop.  Start by downloading the compressed data from the github.  You will need to exit R and extract the files in another program.  You should then have a '~/Desktop/bears_iplant/results' directory with all the subfolders needed for the activity.  Make sure you have created a directory on the desktop called 'bears_iplant'.
 
+```r
+setwd('~/Desktop/bears_iplant/')
+download.file("https://github.com/Arhodes-CGRB-OSU/bears_iplant/blob/master/results.tar.gz","results.tar.gz")
+```
+Leave R and go to the file directory and extract the "results.tar.gz" file in the same location.  On a Mac, I just double-clicked it, in Windows, you may need a program such as 7-zip or Winzip to unzip the file.
+
+Navigate to `R` subdirectory, the remaining codes are written from this relative directory.  You may need to make the directory R inside your /bears_iplant/ directory.
 ```r
 setwd('~/Desktop/bears_iplant/R')
 ```
+Once you are in this directory, you can either start typing the code below, or copy and paste the entire program from [`analysis.R`](https://raw.githubusercontent.com/Arhodes-CGRB-OSU/bears_iplant/gh-pages/R/analysis.R) into a new R file. (This will only work if the file directories are set up as above). You can execute a line in Rstudio using `ctrl + enter`.
 
 First, let's install `sleuth` and `biomaRt`, a tool that we will use later for
 getting the gene names:
@@ -172,9 +179,7 @@ biocLite("pachterlab/sleuth")
 biocLite("biomaRt")
 ```
 
-Open a new file if you would like to type the commands and add them as we go
-along, or you can simply copy and paste the entire code  [`analysis.R`](https://raw.githubusercontent.com/Arhodes-CGRB-OSU/bears_iplant/gh-pages/R/analysis.R) and follow along. You can execute a
-line in Rstudio using `ctrl + enter`.
+You may see a warning: Warning: package ‘ggplot2’ was built under R version 3.2.3, please ignore this.
 
 Next, load sleuth:
 
@@ -186,10 +191,12 @@ Though not required, I also suggest loading a package called `cowplot` which mak
 default much more aesthetically pleasing:
 
 ```r
-# install.packages('cowplot')
+install.packages('cowplot')
 # if it isn't installed
 library('cowplot')
 ```
+
+You may see a warning message: package ‘cowplot’ was built under R version 3.2.3, please ignore
 
 Let's also set the base working directory:
 
@@ -234,7 +241,7 @@ SRR493371       HOXA1KD
 Let's load this file in R:
 
 ```r
-s2c <- read.table(file.path(base_dir, 'metadata', 'sample_info.tsv'),
+s2c <- read.table("https://raw.githubusercontent.com/Arhodes-CGRB-OSU/bears_iplant/gh-pages/metadata/sample_info.tsv",
   header = TRUE, stringsAsFactors = FALSE)
 ```
 

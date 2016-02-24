@@ -105,12 +105,12 @@ kallisto quant -i ~/analysis/bears_iplant/annotation/some_index.kidx -b 30 -t 2 
 
 where:
 
-- `-i ~/bears_iplant/analysis/annotation/some_index.kidx` indicates to use this `kallisto index`
+- `-i ~/analysis/bears_iplant/annotation/some_index.kidx` indicates to use this `kallisto index`
 - `-b 30` indicates to generate 30 bootstrap samples
 - `-t 2` indicates to use 2 threads
 - `sample_id` is some sample identifier that is unique to each sample
-- `-o ~/bears_iplant/analysis/results/sample_id` indicates to place output in directory `~/analysis/results/sample_id` 
--       (e.g. `~/bears_iplant/analysis/results/sample_id/abundance.h5`)
+- `-o /analysis/bears_iplant/results/sample_id` indicates to place output in directory `~/bears_iplant/analysis/results/sample_id` 
+-       (e.g. `/analysis/bears_iplant/results/sample_id/abundance.h5`)
 - the final two arguments are the 'left' and 'right' reads, respectively
 
 ### running kallisto
@@ -118,10 +118,10 @@ where:
 Run the following commands to start kallisto.  Note how fast it is compared to other counting programs.
 
 ```
-mkdir ~/bears_iplant/analysis/results/paired/SRR493366
-kallisto quant -i ~/bears_iplant/analysis/annotation/human_trans.kidx -b 30 --bias -t 2 \
-  -o ~/bears_iplant/analysis/results/paired/SRR493366/kallisto \
-  ~/bears_iplant/analysis/data/SRR493366/SRR493366_1.fastq.gz ~/analysis/data/SRR493366/SRR493366_2.fastq.gz
+mkdir `/analysis/bears_iplant/results/paired/SRR493366
+kallisto quant -i `/analysis/bears_iplant/annotation/human_trans.kidx -b 30 --bias -t 2 \
+  -o ~/analysis/bears_iplant/results/paired/SRR493366/kallisto \
+  ~/analysis/bears_iplant/data/SRR493366/SRR493366_1.fastq.gz ~/analysis/bears_iplant/data/SRR493366/SRR493366_2.fastq.gz
 ```
 
 ### output

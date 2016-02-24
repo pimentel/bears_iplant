@@ -150,7 +150,9 @@ The human fibroblast RNA-Seq data for the paper is available on GEO at accession
 
 ## Now we need to download our data onto our desktop to continue
 
-Make a directory on your desktop called "bears_iplant"
+Make a directory on your desktop called "bears_iplant".  
+Inside that directory, make another directory named R
+
 Copy your output using WinSCP or Cyberduck into this directory.
 
 Start up RStudio and navigate to `R` subdirectory in the directory we've been

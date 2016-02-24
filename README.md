@@ -173,7 +173,7 @@ biocLite("biomaRt")
 ```
 
 Open a new file if you would like to type the commands and add them as we go
-along, or you can simply open `analysis.R` and follow along. You can execute a
+along, or you can simply copy and paste the entire code  [`analysis.R`](https://raw.githubusercontent.com/Arhodes-CGRB-OSU/bears_iplant/gh-pages/R/analysis.R) and follow along. You can execute a
 line in Rstudio using `ctrl + enter`.
 
 Next, load sleuth:
@@ -217,10 +217,11 @@ experiment, but the column names can be pretty much any valid string.
 Our data is pretty simple in that there is only one covariate here: the
 experimental condition.
 
-This is what the file looks like (from the terminal --- NOT INSIDE R):
+This is what the file looks like by clicking on this link ['sample_info.txv'](https://raw.githubusercontent.com/Arhodes-CGRB-OSU/bears_iplant/gh-pages/metadata/sample_info.tsv):
 
+This file was generated during our callisto run and can be found on the infrastructure by:
 ```bash
-cat metadata/sample_info.tsv
+cat ~/analysis/bears_iplant/metadata/sample_info.tsv
 sample  condition
 SRR493366       scramble
 SRR493367       scramble

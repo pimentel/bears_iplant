@@ -1,0 +1,9 @@
+{
+	"n_targets": 173259,
+	"n_bootstraps": 30,
+	"n_processed": 20141813,
+	"kallisto_version": "0.42.3",
+	"index_version": 10,
+	"start_time": "Sat Sep 19 14:34:33 2015",
+	"call": "kallisto quant -i annotation/human_trans.kidx -b 30 --bias -t 2 -o results/paired/SRR493370/kallisto data/SRR493370/SRR493370_1.fastq.gz data/SRR493370/SRR493370_2.fastq.gz"
+}
